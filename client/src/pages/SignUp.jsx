@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { OAuth } from "../components/OAuth";
 
 export const SignUp = () => {
   const [formdata, setFormdata] = useState({});
@@ -27,10 +28,14 @@ export const SignUp = () => {
 
     try {
       const data = await res.json();
+      if (data.success === false) {
+        setError(data.error);
+        return;
+      }
       setLoading(false);
       navigate("/sign-in");
-    } catch {
-      setError(data.error);
+    } catch (error) {
+      setError(error);
       console.log(data);
     }
   }
@@ -45,7 +50,7 @@ export const SignUp = () => {
           placeholder="Username"
           onChange={handleFormChange}
           id="userName"
-          // required
+          required
         />
         <input
           className="border p-2 rounded-lg "
@@ -53,7 +58,7 @@ export const SignUp = () => {
           type="email"
           onChange={handleFormChange}
           id="email"
-          // required
+          required
         />
         <input
           className="border p-2 rounded-lg"
@@ -61,11 +66,12 @@ export const SignUp = () => {
           type="password"
           onChange={handleFormChange}
           id="password"
-          // required
+          required
         />
         <button className="bg-slate-700 text-white rounded-lg p-2 hover:opacity-90 disabled:opacity-50">
           {!loading ? "SignUp" : "Loading.."}
         </button>
+        <OAuth />
       </form>
       <p className="text-center p-2">
         Already have an account?

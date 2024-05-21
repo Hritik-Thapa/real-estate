@@ -7,7 +7,7 @@ const signup = async (req, res, next) => {
   const { userName, email, password } = req.body;
   try {
     await User.create({ userName, email, password });
-    res.status(201).json("User created");
+    return res.status(201).json("User created");
   } catch (error) {
     next(error);
   }
@@ -16,7 +16,6 @@ const signup = async (req, res, next) => {
 const signin = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const validateUser = User.findOne({ email });
     const response = await User.matchPasswordForToken(email, password);
     return res
       .cookie("user_token", response.token, { httpOnly: true })
@@ -27,4 +26,18 @@ const signin = async (req, res, next) => {
   }
 };
 
-module.exports = { signup, signin };
+const googleAuth = async (req, res, next) => {
+  console.log(`google auth controller`);
+  const { email, userName, photo } = req.body;
+  try {
+    const response = await User.authenticateWithGoogle(email);
+    return res
+      .status(200)
+      .cookie("user_token", response.token, { httpOnly: true })
+      .json(response.userInfo);
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { signup, signin, googleAuth };

@@ -8,7 +8,6 @@ const userSchema = Schema(
     userName: {
       type: String,
       required: true,
-      unique: true,
     },
     password: {
       type: String,
@@ -54,6 +53,23 @@ userSchema.static("matchPasswordForToken", async function (email, password) {
   if (!(hashedPassword === providedPassword)) {
     throw new Error("Incorect Password");
   }
+  const token = jwt.sign(
+    { ...user._doc, password: undefined, salt: undefined },
+    process.env.JSONSECRET
+  );
+  return {
+    token,
+    userInfo: { ...user._doc, password: undefined, salt: undefined },
+  };
+});
+
+userSchema.static("authenticateWithGoogle", async function (email) {
+  console.log("google auth static");
+  const user = await this.findOne({ email });
+  if (!user) {
+    throw new Error("IDFK user not created");
+  }
+  console.log("User Found");
   const token = jwt.sign(
     { ...user._doc, password: undefined, salt: undefined },
     process.env.JSONSECRET
