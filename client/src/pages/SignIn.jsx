@@ -1,23 +1,28 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInFail,
+  signInStart,
+  signInSuccess,
+} from "../redux/user/userSlice";
 
 export const SignIn = () => {
   const [formdata, setFormdata] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { error, loading } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   function handleFormChange(e) {
     setFormdata({
       ...formdata,
       [e.target.id]: e.target.value,
     });
-    console.log(formdata);
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
+    dispatch(signInStart());
 
     const res = await fetch("/api/auth/signin", {
       method: "POST",
@@ -27,11 +32,18 @@ export const SignIn = () => {
 
     try {
       const data = await res.json();
-      setLoading(false);
-      navigate("/");
-    } catch {
-      setError(data.error);
       console.log(data);
+
+      if (data.success === false) {
+        dispatch(signInFail(data.error));
+        console.log(data.message);
+        return;
+      }
+      dispatch(signInSuccess(JSON.stringify(data)));
+      // console.log(`Api:${JSON.stringify(data)}`);
+      navigate("/");
+    } catch (error) {
+      dispatch(signInFail(error.message));
     }
   }
 
@@ -56,7 +68,7 @@ export const SignIn = () => {
           required
         />
         <button className="bg-slate-700 text-white rounded-lg p-2 hover:opacity-90 disabled:opacity-50">
-          {!loading ? "SignUp" : "Loading.."}
+          {!loading ? "Sign In" : "Loading.."}
         </button>
       </form>
       <p className="text-center p-2">

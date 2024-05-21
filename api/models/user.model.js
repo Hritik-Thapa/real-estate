@@ -50,8 +50,10 @@ userSchema.static("matchPasswordForToken", async function (email, password) {
   const providedPassword = createHmac("sha256", salt)
     .update(password)
     .digest("hex");
-  if (!hashedPassword === providedPassword)
+
+  if (!(hashedPassword === providedPassword)) {
     throw new Error("Incorect Password");
+  }
   const token = jwt.sign(
     { ...user._doc, password: undefined, salt: undefined },
     process.env.JSONSECRET

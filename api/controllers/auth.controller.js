@@ -18,7 +18,7 @@ const signin = async (req, res, next) => {
   try {
     const validateUser = User.findOne({ email });
     const response = await User.matchPasswordForToken(email, password);
-    res
+    return res
       .cookie("user_token", response.token, { httpOnly: true })
       .status(200)
       .json(response.userInfo);

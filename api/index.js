@@ -25,6 +25,7 @@ app.use("/api/auth", authRoute);
 
 app.use((err, req, res, next) => {
   const error = err.message;
+  // console.log(`index ${error}`);
   const statusCode = 500;
   const success = false;
   return res.status(statusCode).json({
