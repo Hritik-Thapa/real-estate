@@ -3,11 +3,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 const Header = () => {
   const { currentUser } = useSelector((state) => state.user);
-  let user;
-  if (currentUser) {
-    user = JSON.parse(currentUser);
-    console.log(user.userName);
-  }
+  // console.log(currentUser);
 
   return (
     <header className="bg-slate-300">
@@ -33,18 +29,16 @@ const Header = () => {
           <Link to="/about">
             <li className="Hidden sm:inline text-slate-700 menu-item">About</li>
           </Link>
-          <Link to="sign-in">
-            <Link to="/profile">
-              {user ? (
-                <img
-                  src={user.pfpUrl}
-                  alt="profile"
-                  className="rounded-full w-8 h-8"
-                />
-              ) : (
-                <li className="sm:inline text-slate-700 menu-item">Sign In</li>
-              )}
-            </Link>
+          <Link to="/profile">
+            {currentUser ? (
+              <img
+                src={currentUser?.pfpUrl}
+                alt="profile"
+                className="rounded-full w-8 h-8"
+              />
+            ) : (
+              <li className="sm:inline text-slate-700 menu-item">Sign In</li>
+            )}
           </Link>
           {/* <Link to="/profile">
             {currentUser ? (

@@ -33,14 +33,13 @@ export const SignIn = () => {
 
     try {
       const data = await res.json();
-      console.log(data);
-
+      console.log("dsadsadasd");
       if (data.success === false) {
         dispatch(signInFail(data.error));
         console.log(data.message);
         return;
       }
-      dispatch(signInSuccess(JSON.stringify(data)));
+      dispatch(signInSuccess(data));
       // console.log(`Api:${JSON.stringify(data)}`);
       navigate("/");
     } catch (error) {

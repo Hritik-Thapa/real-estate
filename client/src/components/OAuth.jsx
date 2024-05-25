@@ -26,7 +26,7 @@ export const OAuth = () => {
         }),
       });
       const data = await res.json();
-      dispatch(signInSuccess(JSON.stringify(data)));
+      dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
       console.log("Could not sign in with google", error);

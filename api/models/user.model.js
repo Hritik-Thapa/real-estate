@@ -31,9 +31,12 @@ const userSchema = Schema(
 );
 
 userSchema.pre("save", function (next) {
+  console.log("user model pre trigerred");
   const user = this;
-  if (!user.isModified("password")) return;
-
+  if (!user.isModified("password")) {
+    console.log("user Not Modified");
+    return;
+  }
   const salt = randomBytes(16).toString();
   const hashedPassword = createHmac("sha256", salt)
     .update(user.password)
