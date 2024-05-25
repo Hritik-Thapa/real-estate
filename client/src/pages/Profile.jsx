@@ -11,7 +11,13 @@ import {
   updateUserFail,
   updateUserSuccess,
   updateUserStart,
+  logoutUserFail,
+  logoutUserStart,
+  logoutUserSuccess,
+  errorReset,
 } from "../redux/user/userSlice";
+import { Navigate } from "react-router-dom";
+import { FaSpinner } from "react-icons/fa";
 
 export const Profile = () => {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -26,9 +32,6 @@ export const Profile = () => {
     email: currentUser.email,
     password: "",
   });
-  // const [username, setUsername] = useState();
-  // const [password, setPassword] = useState();
-  // const [email, setEmail] = useState();
 
   const fileRef = useRef(null);
 
@@ -36,6 +39,9 @@ export const Profile = () => {
     if (file) {
       handleFileUpload(file);
     }
+    return () => {
+      dispatch(errorReset());
+    };
   }, [file]);
 
   function handleFileUpload(file) {
@@ -94,6 +100,45 @@ export const Profile = () => {
     }
   }
 
+  async function handleLogout() {
+    dispatch(logoutUserStart());
+    try {
+      const res = await fetch(`/api/user/logout/${currentUser._id}`, {
+        method: "GET",
+      });
+      if (res.status) {
+        dispatch(logoutUserSuccess());
+        Navigate("/");
+        return;
+      }
+      dispatch(logoutUserFail(data.error));
+    } catch (err) {
+      dispatch(logoutUserFail(err));
+      return;
+    }
+  }
+
+  async function handleProfileDelete() {
+    dispatch(logoutUserStart());
+    try {
+      const res = await fetch(`/api/user/${currentUser._id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      console.log(res);
+      if (res.status) {
+        dispatch(logoutUserSuccess());
+        Navigate("/");
+        return;
+      }
+      dispatch(logoutUserFail(data.error));
+    } catch (err) {
+      dispatch(logoutUserFail(err));
+      return;
+    }
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-center font-semibold text-3xl">Profile</h1>
@@ -147,21 +192,29 @@ export const Profile = () => {
           defaultValue={currentUser.password}
         />
         <button
+          disabled={loading}
           onClick={handleFormSubmit}
           className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-80 disabled:opacity-60"
         >
-          Update
+          {loading ? <FaSpinner /> : "Update Profile"}
         </button>
       </form>
-      {error ? <p className="text-red-700 mt-3 text-center">{error}</p> : ""}
+      {/* {error ? <p className="text-red-700 mt-3 text-center">{error}</p> : ""} */}
       {updateSuccess ? (
         <p className="text-green-700 text-center">Updated Successfully</p>
       ) : (
         ""
       )}
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete</span>
-        <span className="text-red-700 cursor-pointer">Sign Out</span>
+        <span
+          className="text-red-700 cursor-pointer"
+          onClick={handleProfileDelete}
+        >
+          Delete
+        </span>
+        <span className="text-red-700 cursor-pointer" onClick={handleLogout}>
+          Sign Out
+        </span>
       </div>
     </div>
   );
