@@ -16,7 +16,7 @@ import {
   logoutUserSuccess,
   errorReset,
 } from "../redux/user/userSlice";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 
 export const Profile = () => {
@@ -198,10 +198,16 @@ export const Profile = () => {
         >
           {loading ? <FaSpinner /> : "Update Profile"}
         </button>
+        <Link
+          to="/create-listing"
+          className="bg-green-700 text-center uppercase p-3 rounded-lg text-white hover:opacity-80 cursor-pointer"
+        >
+          <span>Create Listing</span>
+        </Link>
       </form>
-      {/* {error ? <p className="text-red-700 mt-3 text-center">{error}</p> : ""} */}
+      {error ? <p className="text-red-700 mt-3 text-center">{error}</p> : ""}
       {updateSuccess ? (
-        <p className="text-green-700 text-center">Updated Successfully</p>
+        <p className="text-green-700 text-center mt-3">Updated Successfully</p>
       ) : (
         ""
       )}

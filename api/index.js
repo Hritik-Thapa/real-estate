@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
 const authRoute = require("./routes/auth.route.js");
+const listingRoute = require("./routes/listing.route.js");
 const userRoute = require("./routes/user.route.js");
 
 const PORT = 5555;
@@ -26,6 +27,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
+app.use("/api/listing", listingRoute);
 
 app.use((err, req, res, next) => {
   const error = err.message;
