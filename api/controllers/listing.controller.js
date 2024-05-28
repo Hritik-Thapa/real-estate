@@ -10,4 +10,15 @@ async function createListing(req, res, next) {
   }
 }
 
-module.exports = { createListing };
+async function getUserListing(req, res, next) {
+  console.log("listing controller");
+  try {
+    const listings = await Listing.find({ createdBy: req.params.id });
+    console.log(listings);
+    return res.status(200).json(listings);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { createListing, getUserListing };

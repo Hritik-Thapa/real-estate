@@ -55,7 +55,8 @@ const listingSchema = new Schema(
       required: true,
     },
     createdBy: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "user",
       required: true,
     },
   },

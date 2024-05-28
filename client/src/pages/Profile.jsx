@@ -32,6 +32,8 @@ export const Profile = () => {
     email: currentUser.email,
     password: "",
   });
+  const [listing, setListing] = useState([]);
+  const [listingError, setListingError] = useState(false);
 
   const fileRef = useRef(null);
 
@@ -43,6 +45,10 @@ export const Profile = () => {
       dispatch(errorReset());
     };
   }, [file]);
+
+  function handleEditListing() {}
+
+  function handleDeleteListing() {}
 
   function handleFileUpload(file) {
     const storage = getStorage(app);
@@ -139,6 +145,24 @@ export const Profile = () => {
     }
   }
 
+  async function handleListings() {
+    setListingLoading(true);
+    try {
+      const res = await fetch(`/api/listing/getListing/${currentUser._id}`, {
+        method: "GET",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        setListingError("Error fetching listings");
+        return;
+      }
+      setListing(data);
+    } catch (err) {
+      setListingLoading(false);
+      setListingError("Error fetching listings");
+    }
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-center font-semibold text-3xl">Profile</h1>
@@ -222,6 +246,56 @@ export const Profile = () => {
           Sign Out
         </span>
       </div>
+      <p
+        onClick={handleListings}
+        className="text-center text-green-700 cursor-pointer"
+      >
+        View Listings
+      </p>
+      {listingError ? <p className="text-red-700 text-center">{error}</p> : ""}
+      {listing && listing.length > 0 && (
+        <div className="flex flex-col gap-3">
+          <h1 className="text-center text-3xl font-semibold my-7">
+            Your Listings
+          </h1>
+          {listing.map((list) => {
+            return (
+              <div
+                className="flex items-center space-around border p-3 rounded-lg"
+                key={list._id}
+              >
+                <Link to={`/listing/${list._id}`}>
+                  <img
+                    src={list.imageUrls[0]}
+                    alt="listing image"
+                    className="h-16 w-16 object-contain"
+                  />
+                </Link>
+                <Link
+                  to={`/listing/${list._id}`}
+                  className="hover:underline font-semibold truncate p-2 flex-1"
+                >
+                  <p>{list.name}</p>
+                </Link>
+                <div className="felx flex-col gap-2">
+                  <p
+                    className="text-red-700 font-semibold uppercase cursor-pointer text-center"
+                    onClick={handleDeleteListing}
+                  >
+                    Delete
+                  </p>
+                  <p
+                    onClick={handleEditListing}
+                    className="text-green-700 font-semibold uppercase cursor-pointer text-center"
+                  >
+                    edit
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
