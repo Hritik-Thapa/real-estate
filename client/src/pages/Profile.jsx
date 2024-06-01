@@ -16,7 +16,7 @@ import {
   logoutUserSuccess,
   errorReset,
 } from "../redux/user/userSlice";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 
 export const Profile = () => {
@@ -45,10 +45,6 @@ export const Profile = () => {
       dispatch(errorReset());
     };
   }, [file]);
-
-  function handleEditListing() {}
-
-  function handleDeleteListing() {}
 
   function handleFileUpload(file) {
     const storage = getStorage(app);
@@ -146,21 +142,41 @@ export const Profile = () => {
   }
 
   async function handleListings() {
-    setListingLoading(true);
     try {
-      const res = await fetch(`/api/listing/getListing/${currentUser._id}`, {
-        method: "GET",
-      });
+      const res = await fetch(
+        `/api/listing/getUserListing/${currentUser._id}`,
+        {
+          method: "GET",
+        }
+      );
       const data = await res.json();
       if (data.success === false) {
         setListingError("Error fetching listings");
         return;
+      }
+      console.log(typeof data.length);
+      if (data.length === 0) {
+        setListingError("Create a listing to get started");
+        console.log(listingError);
       }
       setListing(data);
     } catch (err) {
       setListingLoading(false);
       setListingError("Error fetching listings");
     }
+  }
+
+  function handleDeleteListing(id) {
+    fetch(`/api/listing/${id}`, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        if (res.ok) handleListings;
+      })
+      .catch((err) => {
+        setListingLoading(false);
+        setListingError("Error Deleting Listing");
+      });
   }
 
   return (
@@ -252,7 +268,11 @@ export const Profile = () => {
       >
         View Listings
       </p>
-      {listingError ? <p className="text-red-700 text-center">{error}</p> : ""}
+      {listingError ? (
+        <p className="text-red-700 text-center mt-3">{listingError}</p>
+      ) : (
+        ""
+      )}
       {listing && listing.length > 0 && (
         <div className="flex flex-col gap-3">
           <h1 className="text-center text-3xl font-semibold my-7">
@@ -280,16 +300,15 @@ export const Profile = () => {
                 <div className="felx flex-col gap-2">
                   <p
                     className="text-red-700 font-semibold uppercase cursor-pointer text-center"
-                    onClick={handleDeleteListing}
+                    onClick={() => handleDeleteListing(list._id)}
                   >
                     Delete
                   </p>
-                  <p
-                    onClick={handleEditListing}
-                    className="text-green-700 font-semibold uppercase cursor-pointer text-center"
-                  >
-                    edit
-                  </p>
+                  <Link to={`/update-listing/${list._id}`}>
+                    <p className="text-green-700 font-semibold uppercase cursor-pointer text-center">
+                      edit
+                    </p>
+                  </Link>
                 </div>
               </div>
             );
