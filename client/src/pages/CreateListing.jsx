@@ -123,6 +123,7 @@ export const CreateListing = () => {
     });
     const data = await res.json();
     if (data.success === false) {
+      setLoading(false);
       setError("Failed to create listing");
       return;
     }
@@ -266,7 +267,6 @@ export const CreateListing = () => {
                 min="1"
                 id="discountPrice"
                 step={50}
-                required
                 className="p-3 border border-gray-300 rounded-lg"
                 onChange={handleFormChange}
                 value={formData.discountPrice}

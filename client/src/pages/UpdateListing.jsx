@@ -34,21 +34,21 @@ export const UpdateListing = () => {
   const [files, setFiles] = useState([]);
 
   useEffect(() => {
-    const getListing = async () => {
-      const listingId = params.listingId;
-      console.log(listingId);
-      const res = await fetch(`/api/listing/getListing/${listingId}`);
-      const data = await res.json();
-      if (data.success === false) {
-        console.log(data.message);
-        return;
-      }
-      console.log(data);
-      setFormData(data);
-    };
-
     getListing();
   }, []);
+
+  const getListing = async () => {
+    const listingId = params.listingId;
+    console.log(listingId);
+    const res = await fetch(`/api/listing/${listingId}`);
+    const data = await res.json();
+    if (data.success === false) {
+      console.log(data.message);
+      return;
+    }
+    console.log(data);
+    setFormData(data);
+  };
 
   function handleFormChange(e) {
     if (
