@@ -36,7 +36,7 @@ export const Listing = () => {
 
   const fetchListing = async () => {
     setLoading(true);
-    fetch(`/api/listing/${params.listingId}`, {
+    fetch(`/api/listing/getListing/${params.listingId}`, {
       method: "GET",
     })
       .then((res) => {
