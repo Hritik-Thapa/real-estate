@@ -118,8 +118,18 @@ async function getListings(req, res, next) {
       .sort({ [sort]: sortOrder })
       .limit(limit)
       .skip(startIndex);
-    // console.log(listings);
-    console.log(rent);
+
+    console.log(
+      priceLow,
+      priceHigh,
+      sale,
+      rent,
+      parking,
+      furnished,
+      offer,
+      beds,
+      baths
+    );
 
     res.status(200).json(listings);
   } catch (err) {
